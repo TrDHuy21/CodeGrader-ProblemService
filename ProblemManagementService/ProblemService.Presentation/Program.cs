@@ -18,6 +18,7 @@ namespace ProblemService.Presentation
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddTransient<IProblemService, ProblemService.Application.Service.Implementations.ProblemService>();
             builder.Services.AddTransient<ITagService, TagService>();
+            builder.Services.AddTransient<IProblemTagService, ProblemTagService>();
             //auto mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddControllers();
@@ -40,6 +41,22 @@ namespace ProblemService.Presentation
 
 
             app.MapControllers();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<PMContext>();
+                try
+                {
+
+                    context.Database.Migrate();
+
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+                }
+            };
 
             app.Run();
         }

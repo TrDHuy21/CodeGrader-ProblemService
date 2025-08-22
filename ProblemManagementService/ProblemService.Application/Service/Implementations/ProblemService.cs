@@ -7,6 +7,7 @@ using AutoMapper;
 using Common;
 using ProblemService.Application.DTOs.ProblemDto;
 using ProblemService.Application.Service.Interfaces;
+using ProblemService.Application.Validations;
 using ProblemService.Domain.Entities;
 using ProblemService.Infrastructure.UnitOfWork;
 
@@ -27,13 +28,24 @@ namespace ProblemService.Application.Service.Implementations
         {
             try
             {
+                //Validate
+                List<ErrorField> errors = new List<ErrorField>();
+                errors.Add(ProblemValidation.ValidName(problemDto.Name));
+                errors.Add(ProblemValidation.ValidContent(problemDto.Content));
+                errors.Add(ProblemValidation.ValidLevel(problemDto.Level));
+                errors.Add(ProblemValidation.ValidPromt(problemDto.Promt));
+                foreach (ErrorField error in errors) {
+                    if (error.Message.Count > 0) { 
+                        return Result<CreateProblemDto>.Failure("Validation error",errors);
+                    }
+                }
                 var problem = _mapper.Map<Problem>(problemDto);
                 await _unitOfWork.Problems.AddAsync(problem);
                 await _unitOfWork.SaveChangeAsync();
                 return Result<CreateProblemDto>.Success(problemDto);
             }
             catch (Exception ex) {
-                return Result<CreateProblemDto>.Failure(ex.Message);
+                return Result<CreateProblemDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -42,16 +54,18 @@ namespace ProblemService.Application.Service.Implementations
             try
             {
                 var problem = await _unitOfWork.Problems.GetByIDAsync(id);
-                var problemDto = _mapper.Map<ProblemDto>(problem);
                 if (problem == null) {
-                    return Result<ProblemDto>.Failure("Invalid Id");
+                    return Result<ProblemDto>.Failure("Invalid Id", new List<ErrorField>());
                 }
-                await _unitOfWork.Problems.Delete(problem);
+                //await _unitOfWork.Problems.Delete(problem);
+                problem.IsDelete = true;
+                await _unitOfWork.Problems.Update(problem);
                 await _unitOfWork.SaveChangeAsync();
+                var problemDto = _mapper.Map<ProblemDto>(problem);
                 return Result<ProblemDto>.Success(problemDto);
             }
             catch(Exception ex) {
-                return Result<ProblemDto>.Failure(ex.Message);
+                return Result<ProblemDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -64,7 +78,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<IEnumerable<ProblemDto>>.Success(problemsDto);
             }
             catch (Exception ex) {
-                return Result<IEnumerable<ProblemDto>>.Failure(ex.Message);
+                return Result<IEnumerable<ProblemDto>>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -74,14 +88,14 @@ namespace ProblemService.Application.Service.Implementations
             {
                 var problem = await _unitOfWork.Problems.GetByIDAsync(id);
                 if (problem == null) {
-                    return Result<ProblemDto>.Failure("Invalid Id");
+                    return Result<ProblemDto>.Failure("Invalid Id", new List<ErrorField>());
                 }
                 var problemDto = _mapper.Map<ProblemDto>(problem);
                 return Result<ProblemDto>.Success(problemDto);
 
             }
             catch (Exception ex) {
-                return Result<ProblemDto>.Failure(ex.Message);
+                return Result<ProblemDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -91,7 +105,20 @@ namespace ProblemService.Application.Service.Implementations
             {
                 var problemExist = await _unitOfWork.Problems.GetByIDAsync(problemDto.Id);
                 if (problemExist == null) {
-                    return Result<ProblemDto>.Failure("Invalid Id");
+                    return Result<ProblemDto>.Failure("Invalid Id", new List<ErrorField>());
+                }
+                //Validate
+                List<ErrorField> errors = new List<ErrorField>();
+                errors.Add(ProblemValidation.ValidName(problemDto.Name));
+                errors.Add(ProblemValidation.ValidContent(problemDto.Content));
+                errors.Add(ProblemValidation.ValidLevel(problemDto.Level));
+                errors.Add(ProblemValidation.ValidPromt(problemDto.Promt));
+                foreach (ErrorField error in errors)
+                {
+                    if (error.Message.Count > 0)
+                    {
+                        return Result<ProblemDto>.Failure("Validation error", errors);
+                    }
                 }
                 var problem = _mapper.Map<Problem>(problemDto);
                 await _unitOfWork.Problems.Update(problem);
@@ -99,7 +126,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<ProblemDto>.Success(problemDto);
             }
             catch (Exception ex) {
-                return Result<ProblemDto>.Failure(ex.Message);
+                return Result<ProblemDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
     }

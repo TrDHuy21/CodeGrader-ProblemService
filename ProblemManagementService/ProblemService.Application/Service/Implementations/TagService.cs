@@ -8,6 +8,7 @@ using Common;
 using ProblemService.Application.DTOs.ProblemDto;
 using ProblemService.Application.DTOs.TagDto;
 using ProblemService.Application.Service.Interfaces;
+using ProblemService.Application.Validations;
 using ProblemService.Domain.Entities;
 using ProblemService.Infrastructure.UnitOfWork;
 
@@ -28,6 +29,16 @@ namespace ProblemService.Application.Service.Implementations
         {
             try
             {
+                //Validate
+                List<ErrorField> errors = new List<ErrorField>();
+                errors.Add(TagValidation.ValidName(tagDto.Name));
+                foreach (ErrorField error in errors)
+                {
+                    if (error.Message.Count > 0)
+                    {
+                        return Result<CreateTagDto>.Failure("Validation error", errors);
+                    }
+                }
                 var tag = _mapper.Map<Tag>(tagDto);
                 await _unitOfWork.Tags.AddAsync(tag);
                 await _unitOfWork.SaveChangeAsync();
@@ -35,7 +46,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<CreateTagDto>.Failure(ex.Message);
+                return Result<CreateTagDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -44,18 +55,21 @@ namespace ProblemService.Application.Service.Implementations
             try
             {
                 var tag = await _unitOfWork.Tags.GetByIDAsync(id);
-                var tagDto = _mapper.Map<TagDto>(tag);
                 if (tag == null)
                 {
-                    return Result<TagDto>.Failure("Invalid Id");
+                    return Result<TagDto>.Failure("Invalid Id", new List<ErrorField>());
                 }
-                await _unitOfWork.Tags.Delete(tag);
+                //await _unitOfWork.Tags.Delete(tag);
+                tag.IsDelete = true;
+                await _unitOfWork.Tags.Update(tag);
                 await _unitOfWork.SaveChangeAsync();
+
+                var tagDto = _mapper.Map<TagDto>(tag);
                 return Result<TagDto>.Success(tagDto);
             }
             catch (Exception ex)
             {
-                return Result<TagDto>.Failure(ex.Message);
+                return Result<TagDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -69,7 +83,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<TagDto>>.Failure(ex.Message);
+                return Result<IEnumerable<TagDto>>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -80,7 +94,7 @@ namespace ProblemService.Application.Service.Implementations
                 var tag = await _unitOfWork.Tags.GetByIDAsync(id);
                 if (tag == null)
                 {
-                    return Result<TagDto>.Failure("Invalid Id");
+                    return Result<TagDto>.Failure("Invalid Id", new List<ErrorField>());
                 }
                 var tagDto = _mapper.Map<TagDto>(tag);
                 return Result<TagDto>.Success(tagDto);
@@ -88,7 +102,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<TagDto>.Failure(ex.Message);
+                return Result<TagDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
@@ -99,8 +113,20 @@ namespace ProblemService.Application.Service.Implementations
                 var tagExist = await _unitOfWork.Tags.GetByIDAsync(tagDto.Id);
                 if (tagExist == null)
                 {
-                    return Result<TagDto>.Failure("Invalid Id");
+                    return Result<TagDto>.Failure("Invalid Id", new List<ErrorField>());
                 }
+
+                //Validate
+                List<ErrorField> errors = new List<ErrorField>();
+                errors.Add(TagValidation.ValidName(tagDto.Name));
+                foreach (ErrorField error in errors)
+                {
+                    if (error.Message.Count > 0)
+                    {
+                        return Result<TagDto>.Failure("Validation error", errors);
+                    }
+                }
+
                 var tag = _mapper.Map<Tag>(tagDto);
                 await _unitOfWork.Tags.Update(tag);
                 await _unitOfWork.SaveChangeAsync();
@@ -108,7 +134,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<TagDto>.Failure(ex.Message);
+                return Result<TagDto>.Failure(ex.Message, new List<ErrorField>());
             }
         }
     }
