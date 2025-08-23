@@ -9,5 +9,6 @@ namespace ProblemService.Infrastructure.Repositories.Interfaces
 {
     public interface IInOutExampleRepository : IGenericRepository<InOutExample>
     {
+        Task<IEnumerable<InOutExample>> GetInOutExampleByProblemIdAsync(int id);
     }
 }

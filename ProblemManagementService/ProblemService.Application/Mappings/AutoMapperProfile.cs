@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using ProblemService.Application.DTOs.InOutExampleDto;
 using ProblemService.Application.DTOs.ProblemDto;
 using ProblemService.Application.DTOs.ProblemTagDto;
 using ProblemService.Application.DTOs.TagDto;
@@ -31,6 +32,11 @@ namespace ProblemService.Application.Mappings
                     .ForMember(ptd => ptd.TagId, pt => pt.MapFrom(problemTag => problemTag.TagId))
                     .ForMember(ptd => ptd.ProblemName, pt => pt.MapFrom(problemTag => problemTag.Problem.Name))
                     .ForMember(ptd => ptd.TagName, pt => pt.MapFrom(problemTag => problemTag.Tag.Name));
+
+            //InOutDto
+            CreateMap<InOutExample, InOutExampleDto>().ReverseMap();
+            CreateMap<InOutExample, CreateInOutExampleDto>().ReverseMap();
+
 
         }
     }

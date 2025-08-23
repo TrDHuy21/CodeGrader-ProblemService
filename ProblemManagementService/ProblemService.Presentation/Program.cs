@@ -19,6 +19,7 @@ namespace ProblemService.Presentation
             builder.Services.AddTransient<IProblemService, ProblemService.Application.Service.Implementations.ProblemService>();
             builder.Services.AddTransient<ITagService, TagService>();
             builder.Services.AddTransient<IProblemTagService, ProblemTagService>();
+            builder.Services.AddTransient<IInOutExampleService, InOutExampleService>();
             //auto mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddControllers();

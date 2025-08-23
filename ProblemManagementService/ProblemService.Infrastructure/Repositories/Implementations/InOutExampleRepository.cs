@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProblemService.Domain.Entities;
 using ProblemService.Infrastructure.Context;
 using ProblemService.Infrastructure.Repositories.Interfaces;
@@ -13,6 +14,11 @@ namespace ProblemService.Infrastructure.Repositories.Implementations
     {
         public InOutExampleRepository(PMContext context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<InOutExample>> GetInOutExampleByProblemIdAsync(int id)
+        {
+            return await _context.InOutExamples.Where(i => i.ProblemId == id).ToListAsync();    
         }
     }
 }

@@ -6,7 +6,7 @@ using ProblemService.Application.Service.Interfaces;
 
 namespace ProblemService.Presentation.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/problem/[controller]")]
     [ApiController]
     public class TagController : ControllerBase
     {
