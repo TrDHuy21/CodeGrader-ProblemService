@@ -31,14 +31,14 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllTag")]
+        [HttpGet()]
         public async Task<ActionResult> GetAllTag()
         {
             var result = await _tagService.GetAllTagAsync();
             return Ok(result);
         }
 
-        [HttpPut("UpdateTag")]
+        [HttpPut()]
         public async Task<ActionResult> UpdateTag(TagDto tagDto)
         {
 

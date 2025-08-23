@@ -17,8 +17,8 @@ namespace ProblemService.Presentation.Controllers
             _problemTagService = problemTagService;
         }
 
-        [HttpGet("GetProblemById")]
-        public ActionResult GetProblemTagByIdAsync(int ProblemId , int TagId)
+        [HttpGet("GetProblemTag")]
+        public ActionResult GetProblemTagByIdAsync([FromQuery] int ProblemId , [FromQuery] int TagId)
         {
             var result = _problemTagService.GetProblemTagById(ProblemId,TagId);
             return Ok(result);
@@ -31,7 +31,7 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllTag")]
+        [HttpGet()]
         public ActionResult GetAllTag()
         {
             var result = _problemTagService.GetAllProblemTag();

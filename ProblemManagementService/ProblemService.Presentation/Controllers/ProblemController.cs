@@ -31,14 +31,14 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllProblem")]
+        [HttpGet()]
         public async Task<ActionResult> GetAllProblem()
         {
             var result =  await _problemService.GetAllProblemAsync();
             return Ok(result);
         }
 
-        [HttpPut("UpdateProblem")]
+        [HttpPut()]
         public async Task<ActionResult> UpdateProblem(ProblemDto problemDto)
         {
 

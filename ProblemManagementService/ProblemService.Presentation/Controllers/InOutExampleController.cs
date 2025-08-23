@@ -31,14 +31,14 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllInOutExample")]
+        [HttpGet()]
         public async Task<ActionResult> GetAllInOutExample()
         {
             var result = await _inOutExampleService.GetAllInOutExampleAsync();
             return Ok(result);
         }
 
-        [HttpPut("UpdateInOutExample")]
+        [HttpPut()]
         public async Task<ActionResult> UpdateInOutExample(InOutExampleDto inOutExampleDto)
         {
 
