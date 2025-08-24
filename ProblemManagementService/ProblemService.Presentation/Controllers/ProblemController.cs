@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProblemService.Application.DTOs.FilterDto;
 using ProblemService.Application.DTOs.ProblemDto;
 using ProblemService.Application.Service.Interfaces;
 
@@ -31,14 +32,14 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
-        [HttpGet()]
-        public async Task<ActionResult> GetAllProblem()
+        [HttpGet]
+        public async Task<ActionResult> GetAllProblem([FromQuery] FilterDto filter)
         {
-            var result =  await _problemService.GetAllProblemAsync();
+            var result =  await _problemService.GetAllProblemAsync(filter);
             return Ok(result);
         }
 
-        [HttpPut()]
+        [HttpPut]
         public async Task<ActionResult> UpdateProblem(ProblemDto problemDto)
         {
 

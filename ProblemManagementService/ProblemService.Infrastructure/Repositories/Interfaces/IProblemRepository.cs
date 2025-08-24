@@ -9,5 +9,8 @@ namespace ProblemService.Infrastructure.Repositories.Interfaces
 {
     public interface IProblemRepository : IGenericRepository<Problem>
     {
+        IQueryable<Problem> GetAll();
     }
+
+
 }

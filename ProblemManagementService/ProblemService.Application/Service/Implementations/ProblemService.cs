@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common;
+using Microsoft.EntityFrameworkCore;
+using ProblemService.Application.DTOs.FilterDto;
 using ProblemService.Application.DTOs.ProblemDto;
 using ProblemService.Application.Service.Interfaces;
 using ProblemService.Application.Validations;
 using ProblemService.Domain.Entities;
 using ProblemService.Infrastructure.UnitOfWork;
+using System.Linq.Dynamic.Core;
 
 namespace ProblemService.Application.Service.Implementations
 {
@@ -69,16 +72,31 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
-        public async Task<Result<IEnumerable<ProblemDto>>> GetAllProblemAsync()
+        public async Task<Result<IEnumerable<ProblemDtoDetail>>> GetAllProblemAsync(FilterDto filter)
         {
             try
             {
-                var problems = await _unitOfWork.Problems.GetAllAsync();
-                var problemsDto = _mapper.Map<IEnumerable<ProblemDto>>(problems);
-                return Result<IEnumerable<ProblemDto>>.Success(problemsDto);
+                //filter
+                var problems = _unitOfWork.Problems.GetAll();
+                if (!String.IsNullOrEmpty(filter.NameSearch?.Trim()))
+                {
+                    problems = problems.Where(p => p.Name.Contains(filter.NameSearch));
+                }
+                if (!string.IsNullOrWhiteSpace(filter.SortBy))
+                {
+                    var sortExpression = filter.IsDecending
+                        ? $"{filter.SortBy} descending"
+                        : filter.SortBy;
+
+                    problems = problems.OrderBy(sortExpression);
+                }
+                problems = problems.Take(filter.PageSize).Skip(filter.PageNumber*(filter.PageNumber-1));
+                var problemsList = await problems.ToListAsync();
+                var problemsDto = _mapper.Map<IEnumerable<ProblemDtoDetail>>(problemsList);
+                return Result<IEnumerable<ProblemDtoDetail>>.Success(problemsDto);
             }
             catch (Exception ex) {
-                return Result<IEnumerable<ProblemDto>>.Failure(ex.Message, new List<ErrorField>());
+                return Result<IEnumerable<ProblemDtoDetail>>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 

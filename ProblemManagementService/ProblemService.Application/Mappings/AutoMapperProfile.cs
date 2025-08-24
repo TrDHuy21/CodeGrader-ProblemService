@@ -19,10 +19,20 @@ namespace ProblemService.Application.Mappings
             //Problem
             CreateMap<Problem, CreateProblemDto>().ReverseMap();
             CreateMap<Problem, ProblemDto>().ReverseMap();
+            CreateMap<Problem, ProblemDtoDetail>()
+                    .ForMember(pdt => pdt.Id, p => p.MapFrom(pr => pr.Id))
+                    .ForMember(pdt => pdt.Name, p => p.MapFrom(pr => pr.Name))
+                    .ForMember(pdt => pdt.Content, p => p.MapFrom(pr => pr.Content))
+                    .ForMember(pdt => pdt.Level, p => p.MapFrom(pr => pr.Level))
+                    .ForMember(pdt => pdt.Promt, p => p.MapFrom(pr => pr.Promt))
+                    .ForMember(pdt => pdt.tags, p => p.MapFrom(pr => pr.ProblemTags.Select(pt => pt.Tag).ToList()))
+                    .ForMember(pdt => pdt.inOutExamples, p => p.MapFrom(pr => pr.InOutExamples))
+                    .ForMember(pdt => pdt.IsDelete, p => p.MapFrom(pr => pr.IsDelete));
 
             //Tag
             CreateMap<Tag,TagDto>().ReverseMap();
             CreateMap<Tag, CreateTagDto>().ReverseMap();
+            CreateMap<Tag, TagDtoDetail>().ReverseMap();
 
             //ProblemTag
             CreateMap<ProblemTag, ProblemTagDto>().ReverseMap();
@@ -36,6 +46,7 @@ namespace ProblemService.Application.Mappings
             //InOutDto
             CreateMap<InOutExample, InOutExampleDto>().ReverseMap();
             CreateMap<InOutExample, CreateInOutExampleDto>().ReverseMap();
+            CreateMap<InOutExample, InOutExampleDtoDetail>().ReverseMap();
 
 
         }
