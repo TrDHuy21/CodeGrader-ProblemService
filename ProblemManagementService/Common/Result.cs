@@ -10,16 +10,16 @@ namespace Common
     {
         public bool isSuccess { get; set; }
         public T data { get; set; }
-        public string ErrorMessage { get; set; }
+        public string message { get; set; }
 
-        public List<ErrorField> detail { get; set; }
+        public List<ErrorField> errorDetail { get; set; }
 
-        public Result(bool success, T data, string errorMessage, List<ErrorField> detail)
+        public Result(bool success, T data, string message, List<ErrorField> detail)
         {
             this.isSuccess = success;
             this.data = data;
-            ErrorMessage = errorMessage;
-            this.detail = detail;
+            this.message = message;
+            this.errorDetail = detail;
         }
 
         public static Result<T> Success(T value)

@@ -199,7 +199,7 @@ namespace ProblemService.Application.Service.Implementations
                         if (!result.isSuccess)
                         {
                             _unitOfWork.RollbackTransactionAsync();
-                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,"InOutExample Error : "+result.ErrorMessage,result.detail);
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,"InOutExample Error : "+result.message,result.errorDetail);
                             return totalResult;
                         }
                     }
@@ -210,7 +210,7 @@ namespace ProblemService.Application.Service.Implementations
                         if (!result.isSuccess)
                         {
                             await _unitOfWork.RollbackTransactionAsync();
-                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, "Tag Error : "+ result.ErrorMessage, result.detail);
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, "Tag Error : "+ result.message, result.errorDetail);
                             return totalResult;
                         }
                     }
