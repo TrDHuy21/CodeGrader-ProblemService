@@ -106,14 +106,14 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
-        public async Task<Result<TagDto>> UpdateTagAsync(TagDto tagDto)
+        public async Task<Result<TagDtoDetail>> UpdateTagAsync(TagDtoDetail tagDto)
         {
             try
             {
                 var tagExist = await _unitOfWork.Tags.GetByIDAsync(tagDto.Id);
                 if (tagExist == null)
                 {
-                    return Result<TagDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<TagDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
                 }
 
                 //Validate
@@ -123,18 +123,18 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     if (error.Message.Count > 0)
                     {
-                        return Result<TagDto>.Failure("Validation error", errors);
+                        return Result<TagDtoDetail>.Failure("Validation error", errors);
                     }
                 }
 
                 var tag = _mapper.Map<Tag>(tagDto);
                 await _unitOfWork.Tags.Update(tag);
                 await _unitOfWork.SaveChangeAsync();
-                return Result<TagDto>.Success(tagDto);
+                return Result<TagDtoDetail>.Success(tagDto);
             }
             catch (Exception ex)
             {
-                return Result<TagDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<TagDtoDetail>.Failure(ex.Message, new List<ErrorField>());
             }
         }
     }

@@ -108,19 +108,19 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
-        public async Task<Result<InOutExampleDto>> UpdateInOutExampleAsync(InOutExampleDto inOutExampleDto)
+        public async Task<Result<InOutExampleDtoDetail>> UpdateInOutExampleAsync(InOutExampleDtoDetail inOutExampleDto)
         {
             try
             {
                 var inOutExist = await _unitOfWork.InOutExamples.GetByIDAsync(inOutExampleDto.Id);
                 if (inOutExist == null)
                 {
-                    return Result<InOutExampleDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<InOutExampleDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
                 }
                 var problemContain = await _unitOfWork.Problems.GetByIDAsync(inOutExampleDto.ProblemId);
                 if (problemContain == null)
                 {
-                    return Result<InOutExampleDto>.Failure("Invalid Problem Id", new List<ErrorField>());
+                    return Result<InOutExampleDtoDetail>.Failure("Invalid Problem Id", new List<ErrorField>());
                 }
                 //Validate
                 List<ErrorField> errors = new List<ErrorField>();
@@ -131,17 +131,17 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     if (error.Message.Count > 0)
                     {
-                        return Result<InOutExampleDto>.Failure("Validation error", errors);
+                        return Result<InOutExampleDtoDetail>.Failure("Validation error", errors);
                     }
                 }
                 var inOut = _mapper.Map<InOutExample>(inOutExampleDto);
                 await _unitOfWork.InOutExamples.Update(inOut);
                 await _unitOfWork.SaveChangeAsync();
-                return Result<InOutExampleDto>.Success(inOutExampleDto);
+                return Result<InOutExampleDtoDetail>.Success(inOutExampleDto);
             }
             catch (Exception ex)
             {
-                return Result<InOutExampleDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<InOutExampleDtoDetail>.Failure(ex.Message, new List<ErrorField>());
             }
         }
     }

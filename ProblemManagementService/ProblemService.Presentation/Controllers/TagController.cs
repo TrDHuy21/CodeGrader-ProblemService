@@ -39,7 +39,7 @@ namespace ProblemService.Presentation.Controllers
         }
 
         [HttpPut()]
-        public async Task<ActionResult> UpdateTag(TagDto tagDto)
+        public async Task<ActionResult> UpdateTag(TagDtoDetail tagDto)
         {
 
             var result = await _tagService.UpdateTagAsync(tagDto);

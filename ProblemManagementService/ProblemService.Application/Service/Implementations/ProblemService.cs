@@ -13,6 +13,9 @@ using ProblemService.Application.Validations;
 using ProblemService.Domain.Entities;
 using ProblemService.Infrastructure.UnitOfWork;
 using System.Linq.Dynamic.Core;
+using Microsoft.Extensions.Logging;
+using ProblemService.Application.DTOs.InOutExampleDto;
+using ProblemService.Application.DTOs.TagDto;
 
 namespace ProblemService.Application.Service.Implementations
 {
@@ -20,11 +23,16 @@ namespace ProblemService.Application.Service.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public ProblemService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ILogger<ProblemService> _logger;
+        private readonly ITagService _tagService;
+        private readonly IInOutExampleService _inoutExampleService;
+        public ProblemService(IUnitOfWork unitOfWork, IMapper mapper , ILogger<ProblemService> logger,ITagService tagService , IInOutExampleService inOutExampleService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _logger = logger;
+            _tagService = tagService;
+            _inoutExampleService = inOutExampleService;
         }
 
         public async Task<Result<CreateProblemDto>> AddProblemAsync(CreateProblemDto problemDto)
@@ -100,51 +108,93 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
-        public async Task<Result<ProblemDto>> GetProblemByIDAsync(int id)
+        public async Task<Result<ProblemDtoDetail>> GetProblemByIDAsync(int id)
         {
             try
             {
-                var problem = await _unitOfWork.Problems.GetByIDAsync(id);
+                var query = _unitOfWork.Problems.GetAll().Where(p => p.Id == id);
+                var problem = await query.FirstOrDefaultAsync();
                 if (problem == null) {
-                    return Result<ProblemDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<ProblemDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
                 }
-                var problemDto = _mapper.Map<ProblemDto>(problem);
-                return Result<ProblemDto>.Success(problemDto);
+                var problemDto = _mapper.Map<ProblemDtoDetail>(problem);
+                return Result<ProblemDtoDetail>.Success(problemDto);
 
             }
             catch (Exception ex) {
-                return Result<ProblemDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemDtoDetail>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 
-        public async Task<Result<ProblemDto>> UpdateProblemAsync(ProblemDto problemDto)
+        public async Task<Result<ProblemDtoDetail>> UpdateProblemAsync(ProblemDtoDetail problemDtoDetail)
         {
             try
             {
-                var problemExist = await _unitOfWork.Problems.GetByIDAsync(problemDto.Id);
-                if (problemExist == null) {
-                    return Result<ProblemDto>.Failure("Invalid Id", new List<ErrorField>());
+                var problemExist = await _unitOfWork.Problems.GetByIDAsync(problemDtoDetail.Id);
+                if (problemExist == null)
+                {
+                    return Result<ProblemDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
                 }
+
                 //Validate
                 List<ErrorField> errors = new List<ErrorField>();
-                errors.Add(ProblemValidation.ValidName(problemDto.Name));
-                errors.Add(ProblemValidation.ValidContent(problemDto.Content));
-                errors.Add(ProblemValidation.ValidLevel(problemDto.Level));
-                errors.Add(ProblemValidation.ValidPromt(problemDto.Promt));
+                errors.Add(ProblemValidation.ValidName(problemDtoDetail.Name));
+                errors.Add(ProblemValidation.ValidContent(problemDtoDetail.Content));
+                errors.Add(ProblemValidation.ValidLevel(problemDtoDetail.Level));
+                errors.Add(ProblemValidation.ValidPromt(problemDtoDetail.Promt));
                 foreach (ErrorField error in errors)
                 {
                     if (error.Message.Count > 0)
                     {
-                        return Result<ProblemDto>.Failure("Validation error", errors);
+                        return Result<ProblemDtoDetail>.Failure("Validation error", errors);
                     }
                 }
-                var problem = _mapper.Map<Problem>(problemDto);
-                await _unitOfWork.Problems.Update(problem);
-                await _unitOfWork.SaveChangeAsync();
-                return Result<ProblemDto>.Success(problemDto);
+                await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    //Update problem
+                    ProblemDto problemDto = new ProblemDto();
+                    problemDto.Id = problemDtoDetail.Id;
+                    problemDto.Name = problemDtoDetail.Name;
+                    problemDto.Content = problemDtoDetail.Content;
+                    problemDto.Level = problemDtoDetail.Level;
+                    problemDto.Promt = problemDtoDetail.Promt;
+                    var problem = _mapper.Map<Problem>(problemDto);
+                    await _unitOfWork.Problems.Update(problem);
+
+                    foreach (InOutExampleDtoDetail inOutExampleDto in problemDtoDetail.inOutExamples)
+                    {
+                        var result = await _inoutExampleService.UpdateInOutExampleAsync(inOutExampleDto);
+                        if (!result.isSuccess)
+                        {
+                            _unitOfWork.RollbackTransactionAsync();
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,result.ErrorMessage,result.detail);
+                            return totalResult;
+                        }
+                    }
+
+                    foreach(TagDtoDetail tagDto in problemDtoDetail.tags)
+                    {
+                        var result = await _tagService.UpdateTagAsync(tagDto);
+                        if (!result.isSuccess)
+                        {
+                            await _unitOfWork.RollbackTransactionAsync();
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, result.ErrorMessage, result.detail);
+                            return totalResult;
+                        }
+                    }
+
+                    await _unitOfWork.CommitTransactionAsync();
+
+                }
+                catch (Exception ex) {
+                    await _unitOfWork.RollbackTransactionAsync();
+                    return Result<ProblemDtoDetail>.Failure(ex.Message, new List<ErrorField>());
+                }
+                return Result<ProblemDtoDetail>.Success(problemDtoDetail);
             }
             catch (Exception ex) {
-                return Result<ProblemDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemDtoDetail>.Failure(ex.Message, new List<ErrorField>());
             }
         }
     }

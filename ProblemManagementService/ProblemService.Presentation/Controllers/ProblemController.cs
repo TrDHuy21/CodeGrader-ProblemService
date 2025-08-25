@@ -40,10 +40,10 @@ namespace ProblemService.Presentation.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateProblem(ProblemDto problemDto)
+        public async Task<ActionResult> UpdateProblem(ProblemDtoDetail problemDtoDetail)
         {
 
-            var result = await _problemService.UpdateProblemAsync(problemDto);
+            var result = await _problemService.UpdateProblemAsync(problemDtoDetail);
             return Ok(result);
         }
 

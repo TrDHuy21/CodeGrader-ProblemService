@@ -43,21 +43,21 @@ namespace ProblemService.Presentation
 
             app.MapControllers();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<PMContext>();
-                try
-                {
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var context = scope.ServiceProvider.GetRequiredService<PMContext>();
+            //    try
+            //    {
 
-                    context.Database.Migrate();
+            //        context.Database.Migrate();
 
-                }
-                catch (Exception ex)
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while migrating the database.");
-                }
-            };
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "An error occurred while migrating the database.");
+            //    }
+            //};
 
             app.Run();
         }

@@ -15,6 +15,6 @@ namespace ProblemService.Application.Service.Interfaces
         Task<Result<IEnumerable<InOutExampleDto>>> GetInOutExampleByProblemIDAsync(int id);
         Task<Result<CreateInOutExampleDto>> AddInOutExampleAsync(CreateInOutExampleDto inOutExampleDto);
         Task<Result<InOutExampleDto>> DeleteInOutExampleAsync(int id);
-        Task<Result<InOutExampleDto>> UpdateInOutExampleAsync(InOutExampleDto inOutExampleDto);
+        Task<Result<InOutExampleDtoDetail>> UpdateInOutExampleAsync(InOutExampleDtoDetail inOutExampleDto);
     }
 }

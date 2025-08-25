@@ -39,7 +39,7 @@ namespace ProblemService.Presentation.Controllers
         }
 
         [HttpPut()]
-        public async Task<ActionResult> UpdateInOutExample(InOutExampleDto inOutExampleDto)
+        public async Task<ActionResult> UpdateInOutExample(InOutExampleDtoDetail inOutExampleDto)
         {
 
             var result = await _inOutExampleService.UpdateInOutExampleAsync(inOutExampleDto);

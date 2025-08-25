@@ -13,9 +13,9 @@ namespace ProblemService.Application.Service.Interfaces
     public interface IProblemService
     {
         Task<Result<IEnumerable<ProblemDtoDetail>>> GetAllProblemAsync(FilterDto filter);
-        Task<Result<ProblemDto>> GetProblemByIDAsync(int id);
+        Task<Result<ProblemDtoDetail>> GetProblemByIDAsync(int id);
         Task<Result<CreateProblemDto>> AddProblemAsync(CreateProblemDto problemDto);
         Task<Result<ProblemDto>> DeleteProblemAsync(int id);
-        Task<Result<ProblemDto>> UpdateProblemAsync(ProblemDto problemDto);
+        Task<Result<ProblemDtoDetail>> UpdateProblemAsync(ProblemDtoDetail problemDtoDetail);
     }
 }
