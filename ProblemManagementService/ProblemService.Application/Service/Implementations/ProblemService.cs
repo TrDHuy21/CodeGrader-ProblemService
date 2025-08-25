@@ -133,7 +133,7 @@ namespace ProblemService.Application.Service.Implementations
                 var problemExist = await _unitOfWork.Problems.GetByIDAsync(problemDtoDetail.Id);
                 if (problemExist == null)
                 {
-                    return Result<ProblemDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<ProblemDtoDetail>.Failure("Problem Error : Invalid Id", new List<ErrorField>());
                 }
 
                 //Validate
@@ -146,7 +146,7 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     if (error.Message.Count > 0)
                     {
-                        return Result<ProblemDtoDetail>.Failure("Validation error", errors);
+                        return Result<ProblemDtoDetail>.Failure("Problem Error : Validation error", errors);
                     }
                 }
                 await _unitOfWork.BeginTransactionAsync();
@@ -168,7 +168,7 @@ namespace ProblemService.Application.Service.Implementations
                         if (!result.isSuccess)
                         {
                             _unitOfWork.RollbackTransactionAsync();
-                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,result.ErrorMessage,result.detail);
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,"InOutExample Error : "+result.ErrorMessage,result.detail);
                             return totalResult;
                         }
                     }
@@ -179,7 +179,7 @@ namespace ProblemService.Application.Service.Implementations
                         if (!result.isSuccess)
                         {
                             await _unitOfWork.RollbackTransactionAsync();
-                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, result.ErrorMessage, result.detail);
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, "Tag Error : "+ result.ErrorMessage, result.detail);
                             return totalResult;
                         }
                     }
@@ -189,12 +189,12 @@ namespace ProblemService.Application.Service.Implementations
                 }
                 catch (Exception ex) {
                     await _unitOfWork.RollbackTransactionAsync();
-                    return Result<ProblemDtoDetail>.Failure(ex.Message, new List<ErrorField>());
+                    return Result<ProblemDtoDetail>.Failure("Problem Error : "+ex.Message, new List<ErrorField>());
                 }
                 return Result<ProblemDtoDetail>.Success(problemDtoDetail);
             }
             catch (Exception ex) {
-                return Result<ProblemDtoDetail>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemDtoDetail>.Failure("Problem Error : " + ex.Message, new List<ErrorField>());
             }
         }
     }
