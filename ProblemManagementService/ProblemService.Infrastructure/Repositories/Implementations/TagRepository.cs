@@ -14,5 +14,10 @@ namespace ProblemService.Infrastructure.Repositories.Implementations
         public TagRepository(PMContext context) : base(context)
         {
         }
+
+        public IQueryable<Tag> GetAll()
+        {
+            return _context.Tags;
+        }
     }
 }

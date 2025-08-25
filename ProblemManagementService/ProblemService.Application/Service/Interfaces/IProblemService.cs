@@ -17,5 +17,7 @@ namespace ProblemService.Application.Service.Interfaces
         Task<Result<CreateProblemDto>> AddProblemAsync(CreateProblemDto problemDto);
         Task<Result<ProblemDto>> DeleteProblemAsync(int id);
         Task<Result<ProblemDtoDetail>> UpdateProblemAsync(ProblemDtoDetail problemDtoDetail);
+
+        Task<Result<IEnumerable<ProblemDtoForBookmarkService>>> GetListProblemByIdAsync(List<int> ids);
     }
 }

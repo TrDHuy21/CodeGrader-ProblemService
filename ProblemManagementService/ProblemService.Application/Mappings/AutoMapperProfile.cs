@@ -29,6 +29,13 @@ namespace ProblemService.Application.Mappings
                     .ForMember(pdt => pdt.inOutExamples, p => p.MapFrom(pr => pr.InOutExamples))
                     .ForMember(pdt => pdt.IsDelete, p => p.MapFrom(pr => pr.IsDelete));
 
+            CreateMap<Problem, ProblemDtoForBookmarkService>()
+                    .ForMember(pdt => pdt.Id, p => p.MapFrom(pr => pr.Id))
+                    .ForMember(pdt => pdt.Name, p => p.MapFrom(pr => pr.Name))
+                    .ForMember(pdt => pdt.Level, p => p.MapFrom(pr => pr.Level))
+                    .ForMember(pdt => pdt.tags, p => p.MapFrom(pr => pr.ProblemTags.Select(pt => pt.Tag).ToList()))
+                    .ForMember(pdt => pdt.IsDelete, p => p.MapFrom(pr => pr.IsDelete));
+
             //Tag
             CreateMap<Tag,TagDto>().ReverseMap();
             CreateMap<Tag, CreateTagDto>().ReverseMap();

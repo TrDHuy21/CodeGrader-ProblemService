@@ -9,5 +9,6 @@ namespace ProblemService.Infrastructure.Repositories.Interfaces
 {
     public interface ITagRepository : IGenericRepository<Tag>
     {
+        IQueryable<Tag> GetAll();
     }
 }

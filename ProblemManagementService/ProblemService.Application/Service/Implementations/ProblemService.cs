@@ -90,6 +90,17 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     problems = problems.Where(p => p.Name.Contains(filter.NameSearch));
                 }
+                if(filter.Levels.Count !=0)
+                {
+                    problems = problems.Where(p => filter.Levels.Contains(p.Level));
+                }
+                if(filter.Tagnames.Count !=0)
+                {
+                    var listTags = filter.Tagnames.Select(t => t.Trim().ToLower());
+                    var requestTag = _unitOfWork.Tags.GetAll().Where(t => listTags.Contains(t.Name.Trim().ToLower())).Select(t => t.Id);
+                    var listTagID = await requestTag.ToListAsync();
+                    problems = problems.Where(p => p.ProblemTags.Any(pt => listTagID.Contains(pt.TagId)));
+                }
                 if (!string.IsNullOrWhiteSpace(filter.SortBy))
                 {
                     var sortExpression = filter.IsDecending
@@ -105,6 +116,26 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex) {
                 return Result<IEnumerable<ProblemDtoDetail>>.Failure(ex.Message, new List<ErrorField>());
+            }
+        }
+
+        public async Task<Result<IEnumerable<ProblemDtoForBookmarkService>>> GetListProblemByIdAsync(List<int> ids)
+        {
+            try
+            {
+                if (ids.Count == 0 || ids == null)
+                {
+                    return Result<IEnumerable<ProblemDtoForBookmarkService>>.Failure("List ID is empty", new List<ErrorField>());
+                }
+                var query = _unitOfWork.Problems.GetAll().Where(p => ids.Contains(p.Id)).OrderBy(p => p.Id);
+                var problems = await query.ToListAsync();
+                var problemsDto = _mapper.Map<IEnumerable<ProblemDtoForBookmarkService>>(problems);
+                return Result<IEnumerable<ProblemDtoForBookmarkService>>.Success(problemsDto);
+
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<ProblemDtoForBookmarkService>>.Failure(ex.Message, new List<ErrorField>());
             }
         }
 

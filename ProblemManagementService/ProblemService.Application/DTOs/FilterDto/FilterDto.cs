@@ -9,10 +9,16 @@ namespace ProblemService.Application.DTOs.FilterDto
     public class FilterDto
     {
         //Search By Name
-        public string? NameSearch { get; set; } 
+        public string? NameSearch { get; set; }
 
         ////Searh By Bookmark
         //public bool Bookmark {  get; set; } = false;
+
+        //Search By Level
+        public List<int> Levels { get; set; } = new List<int>();
+
+        //Search by Tag name
+        public List<String> Tagnames { get; set; } = new List<string>();
 
         //Paging
         public int PageNumber { get; set; } = 1;

@@ -25,6 +25,12 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
+        [HttpGet("list")]
+        public async Task<ActionResult> GetListProblemByIdAsync([FromQuery] List<int> ids)
+        {
+            var result = await _problemService.GetListProblemByIdAsync(ids);
+            return Ok(result);
+        }
         [HttpPost]
         public async Task<ActionResult> CreateProblem(CreateProblemDto problemDto)
         {
