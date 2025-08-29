@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProblemService.Application.DTOs.ProblemDto;
 using ProblemService.Application.DTOs.TagDto;
@@ -24,6 +25,7 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateTag(CreateTagDto tagDto)
         {
@@ -31,6 +33,7 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet()]
         public async Task<ActionResult> GetAllTag()
         {
@@ -38,6 +41,7 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut()]
         public async Task<ActionResult> UpdateTag(TagDtoDetail tagDto)
         {
@@ -45,7 +49,7 @@ namespace ProblemService.Presentation.Controllers
             var result = await _tagService.UpdateTagAsync(tagDto);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{Id}")]
         public async Task<ActionResult> DeleteTag(int Id)
         {

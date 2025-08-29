@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProblemService.Application.DTOs.ProblemTagDto;
 using ProblemService.Application.DTOs.TagDto;
@@ -24,22 +25,24 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult> CreateTag(CreateProblemTagDto problemTagDto)
+        public async Task<ActionResult> CreateProblemTag(CreateProblemTagDto problemTagDto)
         {
             var result = await _problemTagService.AddProblemTagAsync(problemTagDto);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet()]
-        public ActionResult GetAllTag()
+        public ActionResult GetAllProblemTag()
         {
             var result = _problemTagService.GetAllProblemTag();
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{Id}")]
-        public async Task<ActionResult> DeleteTag(int ProblemId, int TagId)
+        public async Task<ActionResult> DeleteProblemTag(int ProblemId, int TagId)
         {
 
             var result = await _problemTagService.DeleteProblemTagAsync(ProblemId,TagId);

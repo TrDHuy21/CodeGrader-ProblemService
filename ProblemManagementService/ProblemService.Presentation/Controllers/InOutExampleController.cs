@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProblemService.Application.DTOs.InOutExampleDto;
 using ProblemService.Application.DTOs.ProblemDto;
@@ -23,21 +24,21 @@ namespace ProblemService.Presentation.Controllers
             var result = await _inOutExampleService.GetInOutExampleByProblemIDAsync(id);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateInOutExample(CreateInOutExampleDto inOutExampleDto)
         {
             var result = await _inOutExampleService.AddInOutExampleAsync(inOutExampleDto);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet()]
         public async Task<ActionResult> GetAllInOutExample()
         {
             var result = await _inOutExampleService.GetAllInOutExampleAsync();
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut()]
         public async Task<ActionResult> UpdateInOutExample(InOutExampleDtoDetail inOutExampleDto)
         {
@@ -45,7 +46,7 @@ namespace ProblemService.Presentation.Controllers
             var result = await _inOutExampleService.UpdateInOutExampleAsync(inOutExampleDto);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{Id}")]
         public async Task<ActionResult> DeleteInOutExample(int Id)
         {

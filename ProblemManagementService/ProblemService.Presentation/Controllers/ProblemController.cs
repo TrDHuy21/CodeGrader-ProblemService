@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProblemService.Application.DTOs.FilterDto;
@@ -30,7 +31,10 @@ namespace ProblemService.Presentation.Controllers
         {
             var result = await _problemService.GetListProblemByIdAsync(ids);
             return Ok(result);
+
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateProblem(CreateProblemDto problemDto)
         {
@@ -44,7 +48,7 @@ namespace ProblemService.Presentation.Controllers
             var result =  await _problemService.GetAllProblemAsync(filter);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ActionResult> UpdateProblem(ProblemDtoDetail problemDtoDetail)
         {
@@ -52,7 +56,7 @@ namespace ProblemService.Presentation.Controllers
             var result = await _problemService.UpdateProblemAsync(problemDtoDetail);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{Id}")]
         public async Task<ActionResult> DeleteProblem(int Id)
         {
