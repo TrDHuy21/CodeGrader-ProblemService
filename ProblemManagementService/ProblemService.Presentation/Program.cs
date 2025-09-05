@@ -15,6 +15,18 @@ namespace ProblemService.Presentation
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("http://localhost:4200")
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader()
+                                      .AllowCredentials();
+                                  });
+            });
 
             // Add services to the container.
             builder.Services.AddDbContext<PMContext>(ops => ops.UseSqlServer(builder.Configuration.GetConnectionString("PMConnection")));
@@ -52,7 +64,7 @@ namespace ProblemService.Presentation
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
-
+            app.UseCors(MyAllowSpecificOrigins);
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{

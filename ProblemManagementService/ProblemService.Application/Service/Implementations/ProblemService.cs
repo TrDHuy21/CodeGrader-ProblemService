@@ -60,6 +60,34 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
+        public async Task<Result<int>> countTotalProblem(FilterDto filter)
+        {
+            try
+            {
+                var problems = _unitOfWork.Problems.GetAll();
+                if (!String.IsNullOrEmpty(filter.NameSearch?.Trim()))
+                {
+                    problems = problems.Where(p => p.Name.Contains(filter.NameSearch));
+                }
+                if (filter.Levels.Count != 0)
+                {
+                    problems = problems.Where(p => filter.Levels.Contains(p.Level));
+                }
+                if (filter.Tagnames.Count != 0)
+                {
+                    var listTags = filter.Tagnames.Select(t => t.Trim().ToLower());
+                    var requestTag = _unitOfWork.Tags.GetAll().Where(t => listTags.Contains(t.Name.Trim().ToLower())).Select(t => t.Id);
+                    var listTagID = await requestTag.ToListAsync();
+                    problems = problems.Where(p => p.ProblemTags.Any(pt => listTagID.Contains(pt.TagId)));
+                }
+                var problemsFilter = await problems.ToListAsync();
+                return Result<int>.Success(problemsFilter.Count);
+            }
+            catch (Exception ex) {
+                return Result<int>.Failure(ex.Message, new List<ErrorField>());
+            }
+        }
+
         public async Task<Result<ProblemDto>> DeleteProblemAsync(int id)
         {
             try
@@ -109,7 +137,7 @@ namespace ProblemService.Application.Service.Implementations
 
                     problems = problems.OrderBy(sortExpression);
                 }
-                problems = problems.Take(filter.PageSize).Skip(filter.PageNumber*(filter.PageNumber-1));
+                problems = problems.Skip(filter.PageSize * (filter.PageNumber-1)).Take(filter.PageSize);
                 var problemsList = await problems.ToListAsync();
                 var problemsDto = _mapper.Map<IEnumerable<ProblemDtoDetail>>(problemsList);
                 return Result<IEnumerable<ProblemDtoDetail>>.Success(problemsDto);

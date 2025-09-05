@@ -64,5 +64,13 @@ namespace ProblemService.Presentation.Controllers
             var result = await _problemService.DeleteProblemAsync(Id);
             return Ok(result);
         }
+
+        [HttpGet("total")]
+        public async Task<ActionResult> CountProblem([FromQuery] FilterDto filter)
+        {
+
+            var result = await _problemService.countTotalProblem(filter);
+            return Ok(result);
+        }
     }
 }
