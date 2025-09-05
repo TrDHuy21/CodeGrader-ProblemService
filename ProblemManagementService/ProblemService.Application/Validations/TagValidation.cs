@@ -11,10 +11,11 @@ namespace ProblemService.Application.Validations
     {
         public static ErrorField ValidName(string name)
         {
-            ErrorField ErrorName = new ErrorField("Name", new List<string>());
+            ErrorField ErrorName = new ErrorField("Name", "");
             if (name == null || name.Length == 0)
             {
-                ErrorName.Message.Add("Name cannot be null");
+                ErrorName.ErrorMessage = "Name cannot be null";
+                return ErrorName;
             }
             return ErrorName;
         }

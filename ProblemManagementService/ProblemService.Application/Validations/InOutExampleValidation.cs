@@ -11,20 +11,22 @@ namespace ProblemService.Application.Validations
     {
         public static ErrorField ValidInput(string input)
         {
-            ErrorField ErrorInput = new ErrorField("InputExample", new List<string>());
+            ErrorField ErrorInput = new ErrorField("InputExample", "");
             if (input == null || input.Length == 0)
             {
-                ErrorInput.Message.Add("Input Example cannot be null");
+                ErrorInput.ErrorMessage = "Input Example cannot be null";
+                return ErrorInput;
             }
             return ErrorInput;
         }
 
         public static ErrorField ValidOutput(string output)
         {
-            ErrorField ErrorOutput = new ErrorField("OutputExample", new List<string>());
+            ErrorField ErrorOutput = new ErrorField("OutputExample", "");
             if (output == null || output.Length == 0)
             {
-                ErrorOutput.Message.Add("Output Example cannot be null");
+                ErrorOutput.ErrorMessage = "Output Example cannot be null";
+                return ErrorOutput;
             }
             return ErrorOutput;
         }
@@ -32,10 +34,11 @@ namespace ProblemService.Application.Validations
 
         public static ErrorField ValidExplanation(string explain)
         {
-            ErrorField ErrorExplanation = new ErrorField("Explanation", new List<string>());
+            ErrorField ErrorExplanation = new ErrorField("Explanation", "");
             if (explain == null || explain.Length == 0)
             {
-                ErrorExplanation.Message.Add("Explanation cannot be null");
+                ErrorExplanation.ErrorMessage = "Explanation cannot be null";
+                return ErrorExplanation;
             }
             return ErrorExplanation;
         }

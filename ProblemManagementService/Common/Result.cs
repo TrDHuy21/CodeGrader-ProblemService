@@ -9,24 +9,24 @@ namespace Common
     public class Result<T>
     {
         public bool isSuccess { get; set; }
-        public T data { get; set; }
-        public string message { get; set; }
+        public T? Data { get; set; }
+        public string? Message { get; set; }
 
-        public List<ErrorField> errorDetail { get; set; }
+        public ErrorDetail errorDetail { get; set; }
 
-        public Result(bool success, T data, string message, List<ErrorField> detail)
+        public Result(bool success, T data, string message, ErrorDetail detail)
         {
             this.isSuccess = success;
-            this.data = data;
-            this.message = message;
+            this.Data = data;
+            this.Message = message;
             this.errorDetail = detail;
         }
 
         public static Result<T> Success(T value)
         {
-            return new Result<T>(true, value, null, new List<ErrorField>());
+            return new Result<T>(true, value, null, new ErrorDetail());
         }
-        public static Result<T> Failure(string errorMessage , List<ErrorField> errorFields)
+        public static Result<T> Failure(string errorMessage , ErrorDetail errorFields)
         {
             return new Result<T>(false, default(T), errorMessage,errorFields);
         }

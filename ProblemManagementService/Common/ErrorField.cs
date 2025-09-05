@@ -9,12 +9,12 @@ namespace Common
     public class ErrorField
     {
         public string Field {  get; set; }  
-        public List<string> Message { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public ErrorField(string field, List<string> message)
+        public ErrorField(string field, string message)
         {
             Field = field;
-            Message = message;
+            ErrorMessage = message;
         }
     }
 }

@@ -34,19 +34,30 @@ namespace ProblemService.Application.Service.Implementations
                 //Validate
                 var problemContain = await _unitOfWork.Problems.GetByIDAsync(inOutExampleDto.ProblemId);
                 if (problemContain == null) {
-                    return Result<CreateInOutExampleDto>.Failure("Invalid Problem Id", new List<ErrorField>());
+                    return Result<CreateInOutExampleDto>.Failure("Invalid Problem Id", new ErrorDetail());
                 }
-                List<ErrorField> errors = new List<ErrorField>();
-                errors.Add(InOutExampleValidation.ValidInput(inOutExampleDto.InputExample));
-                errors.Add(InOutExampleValidation.ValidOutput(inOutExampleDto.OutputExample));
-                errors.Add(InOutExampleValidation.ValidExplanation(inOutExampleDto.Explanation));
-                foreach (ErrorField error in errors)
+                ErrorDetail errorDetail = new ErrorDetail();
+                var errorDetailInput = InOutExampleValidation.ValidInput(inOutExampleDto.InputExample);
+                if (!string.IsNullOrWhiteSpace(errorDetailInput.ErrorMessage))
                 {
-                    if (error.Message.Count > 0)
-                    {
-                        return Result<CreateInOutExampleDto>.Failure("Validation error", errors);
-                    }
+                    errorDetail.Errors.Add(errorDetailInput);
                 }
+                var errorDetailOutput = InOutExampleValidation.ValidOutput(inOutExampleDto.OutputExample);
+                if (!string.IsNullOrWhiteSpace(errorDetailOutput.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailOutput);
+                }
+                var errorDetailExplanation = InOutExampleValidation.ValidExplanation(inOutExampleDto.Explanation);
+                if (!string.IsNullOrWhiteSpace(errorDetailExplanation.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailExplanation);
+                }
+
+                if (errorDetail.Errors.Count > 0)
+                {
+                    return Result<CreateInOutExampleDto>.Failure("Validation error", errorDetail);
+                }
+
                 var inoutex = _mapper.Map<InOutExample>(inOutExampleDto);
                 await _unitOfWork.InOutExamples.AddAsync(inoutex);
                 await _unitOfWork.SaveChangeAsync();
@@ -54,7 +65,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<CreateInOutExampleDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<CreateInOutExampleDto>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -65,7 +76,7 @@ namespace ProblemService.Application.Service.Implementations
                 var inOutExample = await _unitOfWork.InOutExamples.GetByIDAsync(id);
                 if (inOutExample == null)
                 {
-                    return Result<InOutExampleDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<InOutExampleDto>.Failure("Invalid Id", new ErrorDetail());
                 }
                 //await _unitOfWork.Problems.Delete(problem);
                 inOutExample.IsDelete = true;
@@ -76,7 +87,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<InOutExampleDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<InOutExampleDto>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -90,7 +101,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<InOutExampleDto>>.Failure(ex.Message, new List<ErrorField>());
+                return Result<IEnumerable<InOutExampleDto>>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -104,7 +115,7 @@ namespace ProblemService.Application.Service.Implementations
 
             }
             catch (Exception ex) {
-                return Result<IEnumerable<InOutExampleDto>>.Failure(ex.Message, new List<ErrorField>());
+                return Result<IEnumerable<InOutExampleDto>>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -115,24 +126,34 @@ namespace ProblemService.Application.Service.Implementations
                 var inOutExist = await _unitOfWork.InOutExamples.GetByIDAsync(inOutExampleDto.Id);
                 if (inOutExist == null)
                 {
-                    return Result<InOutExampleDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<InOutExampleDtoDetail>.Failure("Invalid Id", new ErrorDetail());
                 }
                 var problemContain = await _unitOfWork.Problems.GetByIDAsync(inOutExampleDto.ProblemId);
                 if (problemContain == null)
                 {
-                    return Result<InOutExampleDtoDetail>.Failure("Invalid Problem Id", new List<ErrorField>());
+                    return Result<InOutExampleDtoDetail>.Failure("Invalid Problem Id", new ErrorDetail());
                 }
                 //Validate
-                List<ErrorField> errors = new List<ErrorField>();
-                errors.Add(InOutExampleValidation.ValidInput(inOutExampleDto.InputExample));
-                errors.Add(InOutExampleValidation.ValidOutput(inOutExampleDto.OutputExample));
-                errors.Add(InOutExampleValidation.ValidExplanation(inOutExampleDto.Explanation));
-                foreach (ErrorField error in errors)
+                ErrorDetail errorDetail = new ErrorDetail();
+                var errorDetailInput = InOutExampleValidation.ValidInput(inOutExampleDto.InputExample);
+                if (!string.IsNullOrWhiteSpace(errorDetailInput.ErrorMessage))
                 {
-                    if (error.Message.Count > 0)
-                    {
-                        return Result<InOutExampleDtoDetail>.Failure("Validation error", errors);
-                    }
+                    errorDetail.Errors.Add(errorDetailInput);
+                }
+                var errorDetailOutput = InOutExampleValidation.ValidOutput(inOutExampleDto.OutputExample);
+                if (!string.IsNullOrWhiteSpace(errorDetailOutput.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailOutput);
+                }
+                var errorDetailExplanation = InOutExampleValidation.ValidExplanation(inOutExampleDto.Explanation);
+                if (!string.IsNullOrWhiteSpace(errorDetailExplanation.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailExplanation);
+                }
+
+                if (errorDetail.Errors.Count > 0)
+                {
+                    return Result<InOutExampleDtoDetail>.Failure("Validation error", errorDetail);
                 }
                 var inOut = _mapper.Map<InOutExample>(inOutExampleDto);
                 await _unitOfWork.InOutExamples.Update(inOut);
@@ -141,7 +162,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<InOutExampleDtoDetail>.Failure(ex.Message, new List<ErrorField>());
+                return Result<InOutExampleDtoDetail>.Failure(ex.Message, new ErrorDetail());
             }
         }
     }

@@ -40,23 +40,41 @@ namespace ProblemService.Application.Service.Implementations
             try
             {
                 //Validate
-                List<ErrorField> errors = new List<ErrorField>();
-                errors.Add(ProblemValidation.ValidName(problemDto.Name));
-                errors.Add(ProblemValidation.ValidContent(problemDto.Content));
-                errors.Add(ProblemValidation.ValidLevel(problemDto.Level));
-                errors.Add(ProblemValidation.ValidPromt(problemDto.Promt));
-                foreach (ErrorField error in errors) {
-                    if (error.Message.Count > 0) { 
-                        return Result<CreateProblemDto>.Failure("Validation error",errors);
-                    }
+                ErrorDetail errorDetail = new ErrorDetail();
+                var errorDetailName = ProblemValidation.ValidName(problemDto.Name);
+                if (!string.IsNullOrWhiteSpace(errorDetailName.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailName);
                 }
+                var errorDetailContent = ProblemValidation.ValidContent(problemDto.Content);
+                if (!string.IsNullOrWhiteSpace(errorDetailContent.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailContent);
+                }
+                var errorDetailLevel = ProblemValidation.ValidLevel(problemDto.Level);
+                if (!string.IsNullOrWhiteSpace(errorDetailLevel.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailLevel);
+                }
+                var errorDetailPromt = ProblemValidation.ValidPromt(problemDto.Promt);
+                if (!string.IsNullOrWhiteSpace(errorDetailPromt.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailPromt);
+                }
+
+                if (errorDetail.Errors.Count > 0)
+                {
+                    return Result<CreateProblemDto>.Failure("Validation error", errorDetail);
+                }
+
+
                 var problem = _mapper.Map<Problem>(problemDto);
                 await _unitOfWork.Problems.AddAsync(problem);
                 await _unitOfWork.SaveChangeAsync();
                 return Result<CreateProblemDto>.Success(problemDto);
             }
             catch (Exception ex) {
-                return Result<CreateProblemDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<CreateProblemDto>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -84,7 +102,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<int>.Success(problemsFilter.Count);
             }
             catch (Exception ex) {
-                return Result<int>.Failure(ex.Message, new List<ErrorField>());
+                return Result<int>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -94,7 +112,7 @@ namespace ProblemService.Application.Service.Implementations
             {
                 var problem = await _unitOfWork.Problems.GetByIDAsync(id);
                 if (problem == null) {
-                    return Result<ProblemDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<ProblemDto>.Failure("Invalid Id", new ErrorDetail());
                 }
                 //await _unitOfWork.Problems.Delete(problem);
                 problem.IsDelete = true;
@@ -104,7 +122,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<ProblemDto>.Success(problemDto);
             }
             catch(Exception ex) {
-                return Result<ProblemDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemDto>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -143,7 +161,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<IEnumerable<ProblemDtoDetail>>.Success(problemsDto);
             }
             catch (Exception ex) {
-                return Result<IEnumerable<ProblemDtoDetail>>.Failure(ex.Message, new List<ErrorField>());
+                return Result<IEnumerable<ProblemDtoDetail>>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -153,7 +171,7 @@ namespace ProblemService.Application.Service.Implementations
             {
                 if (ids.Count == 0 || ids == null)
                 {
-                    return Result<IEnumerable<ProblemDtoForBookmarkService>>.Failure("List ID is empty", new List<ErrorField>());
+                    return Result<IEnumerable<ProblemDtoForBookmarkService>>.Failure("List ID is empty", new ErrorDetail());
                 }
                 var query = _unitOfWork.Problems.GetAll().Where(p => ids.Contains(p.Id)).OrderBy(p => p.Id);
                 var problems = await query.ToListAsync();
@@ -163,7 +181,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<ProblemDtoForBookmarkService>>.Failure(ex.Message, new List<ErrorField>());
+                return Result<IEnumerable<ProblemDtoForBookmarkService>>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -174,14 +192,14 @@ namespace ProblemService.Application.Service.Implementations
                 var query = _unitOfWork.Problems.GetAll().Where(p => p.Id == id);
                 var problem = await query.FirstOrDefaultAsync();
                 if (problem == null) {
-                    return Result<ProblemDtoDetail>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<ProblemDtoDetail>.Failure("Invalid Id", new ErrorDetail());
                 }
                 var problemDto = _mapper.Map<ProblemDtoDetail>(problem);
                 return Result<ProblemDtoDetail>.Success(problemDto);
 
             }
             catch (Exception ex) {
-                return Result<ProblemDtoDetail>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemDtoDetail>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -192,22 +210,37 @@ namespace ProblemService.Application.Service.Implementations
                 var problemExist = await _unitOfWork.Problems.GetByIDAsync(problemDtoDetail.Id);
                 if (problemExist == null)
                 {
-                    return Result<ProblemDtoDetail>.Failure("Problem Error : Invalid Id", new List<ErrorField>());
+                    return Result<ProblemDtoDetail>.Failure("Problem Error : Invalid Id", new ErrorDetail());
                 }
 
                 //Validate
-                List<ErrorField> errors = new List<ErrorField>();
-                errors.Add(ProblemValidation.ValidName(problemDtoDetail.Name));
-                errors.Add(ProblemValidation.ValidContent(problemDtoDetail.Content));
-                errors.Add(ProblemValidation.ValidLevel(problemDtoDetail.Level));
-                errors.Add(ProblemValidation.ValidPromt(problemDtoDetail.Promt));
-                foreach (ErrorField error in errors)
+                ErrorDetail errorDetail = new ErrorDetail();
+                var errorDetailName = ProblemValidation.ValidName(problemDtoDetail.Name);
+                if (!string.IsNullOrWhiteSpace(errorDetailName.ErrorMessage))
                 {
-                    if (error.Message.Count > 0)
-                    {
-                        return Result<ProblemDtoDetail>.Failure("Problem Error : Validation error", errors);
-                    }
+                    errorDetail.Errors.Add(errorDetailName);
                 }
+                var errorDetailContent = ProblemValidation.ValidContent(problemDtoDetail.Content);
+                if (!string.IsNullOrWhiteSpace(errorDetailContent.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailContent);
+                }
+                var errorDetailLevel = ProblemValidation.ValidLevel(problemDtoDetail.Level);
+                if (!string.IsNullOrWhiteSpace(errorDetailLevel.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailLevel);
+                }
+                var errorDetailPromt = ProblemValidation.ValidPromt(problemDtoDetail.Promt);
+                if (!string.IsNullOrWhiteSpace(errorDetailPromt.ErrorMessage))
+                {
+                    errorDetail.Errors.Add(errorDetailPromt);
+                }
+
+                if (errorDetail.Errors.Count > 0)
+                {
+                    return Result<ProblemDtoDetail>.Failure("Validation error", errorDetail);
+                }
+
                 await _unitOfWork.BeginTransactionAsync();
                 try
                 {
@@ -227,7 +260,7 @@ namespace ProblemService.Application.Service.Implementations
                         if (!result.isSuccess)
                         {
                             _unitOfWork.RollbackTransactionAsync();
-                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,"InOutExample Error : "+result.message,result.errorDetail);
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess,null,"InOutExample Error : "+result.Message,result.errorDetail);
                             return totalResult;
                         }
                     }
@@ -238,7 +271,7 @@ namespace ProblemService.Application.Service.Implementations
                         if (!result.isSuccess)
                         {
                             await _unitOfWork.RollbackTransactionAsync();
-                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, "Tag Error : "+ result.message, result.errorDetail);
+                            var totalResult = new Result<ProblemDtoDetail>(result.isSuccess, null, "Tag Error : "+ result.Message, result.errorDetail);
                             return totalResult;
                         }
                     }
@@ -248,12 +281,12 @@ namespace ProblemService.Application.Service.Implementations
                 }
                 catch (Exception ex) {
                     await _unitOfWork.RollbackTransactionAsync();
-                    return Result<ProblemDtoDetail>.Failure("Problem Error : "+ex.Message, new List<ErrorField>());
+                    return Result<ProblemDtoDetail>.Failure("Problem Error : "+ex.Message, new ErrorDetail());
                 }
                 return Result<ProblemDtoDetail>.Success(problemDtoDetail);
             }
             catch (Exception ex) {
-                return Result<ProblemDtoDetail>.Failure("Problem Error : " + ex.Message, new List<ErrorField>());
+                return Result<ProblemDtoDetail>.Failure("Problem Error : " + ex.Message, new ErrorDetail());
             }
         }
     }

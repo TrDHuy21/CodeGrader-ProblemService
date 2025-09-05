@@ -32,7 +32,7 @@ namespace ProblemService.Application.Service.Implementations
                 var tagExist = await _unitOfWork.Tags.GetByIDAsync(problemTagDto.TagId);
                 if(problemExist == null  || tagExist == null)
                 {
-                    return Result<CreateProblemTagDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<CreateProblemTagDto>.Failure("Invalid Id", new ErrorDetail());
                 }
                 var problemTag = _mapper.Map<ProblemTag>(problemTagDto);
                 await _unitOfWork.ProblemTags.AddAsync(problemTag);
@@ -40,7 +40,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<CreateProblemTagDto>.Success(problemTagDto);
             }
             catch (Exception ex) {
-                return Result<CreateProblemTagDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<CreateProblemTagDto>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -51,7 +51,7 @@ namespace ProblemService.Application.Service.Implementations
                 var problemTag = _unitOfWork.ProblemTags.GetProblemTagById(ProblemId,TagId);
                 if (problemTag == null)
                 {
-                    return Result<ProblemTagDto>.Failure("Invalid Id", new List<ErrorField>());
+                    return Result<ProblemTagDto>.Failure("Invalid Id", new ErrorDetail());
                 }
                 
                 //await _unitOfWork.ProblemTags.Delete(problemTag);
@@ -62,7 +62,7 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<ProblemTagDto>.Success(problemTagDto);
             }
             catch (Exception ex) {
-                return Result<ProblemTagDto>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemTagDto>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -81,7 +81,7 @@ namespace ProblemService.Application.Service.Implementations
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<ProblemTagDtoDetail>>.Failure(ex.Message, new List<ErrorField>());
+                return Result<IEnumerable<ProblemTagDtoDetail>>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
@@ -92,14 +92,14 @@ namespace ProblemService.Application.Service.Implementations
                 var problemTag = _unitOfWork.ProblemTags.GetProblemTagById(ProblemId, TagId);
                 if(problemTag == null)
                 {
-                    return Result<ProblemTagDtoDetail>.Failure("Not Found", new List<ErrorField>());
+                    return Result<ProblemTagDtoDetail>.Failure("Not Found", new ErrorDetail());
                 }
                 var problemTagDto = _mapper.Map<ProblemTagDtoDetail>(problemTag);
                 return Result<ProblemTagDtoDetail>.Success(problemTagDto);
 
             }
             catch (Exception ex) {
-                return Result<ProblemTagDtoDetail>.Failure(ex.Message, new List<ErrorField>());
+                return Result<ProblemTagDtoDetail>.Failure(ex.Message, new ErrorDetail());
             }
         }
 
