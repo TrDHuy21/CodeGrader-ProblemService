@@ -157,6 +157,10 @@ namespace ProblemService.Application.Service.Implementations
                 }
                 problems = problems.Skip(filter.PageSize * (filter.PageNumber-1)).Take(filter.PageSize);
                 var problemsList = await problems.ToListAsync();
+                if(filter.PageNumber == 0)
+                {
+                    problemsList = [];
+                }
                 var problemsDto = _mapper.Map<IEnumerable<ProblemDtoDetail>>(problemsList);
                 return Result<IEnumerable<ProblemDtoDetail>>.Success(problemsDto);
             }
