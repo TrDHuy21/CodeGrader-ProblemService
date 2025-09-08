@@ -33,7 +33,6 @@ namespace ProblemService.Presentation.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet()]
         public async Task<ActionResult> GetAllTag()
         {

@@ -14,7 +14,7 @@ namespace ProblemService.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<ProblemTag> builder)
         {
             builder.ToTable(nameof(ProblemTag));
-            builder.HasKey(x => x.ProblemId);
+            builder.HasKey(x => new { x.ProblemId , x.TagId});
             builder.Property(x => x.ProblemId).ValueGeneratedOnAdd();
             builder.HasOne(pt => pt.Problem)
                    .WithMany(p => p.ProblemTags)

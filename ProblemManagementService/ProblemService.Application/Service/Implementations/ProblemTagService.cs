@@ -53,10 +53,10 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     return Result<ProblemTagDto>.Failure("Invalid Id", new ErrorDetail());
                 }
-                
-                //await _unitOfWork.ProblemTags.Delete(problemTag);
-                problemTag.IsDelete = true;
-                await _unitOfWork.ProblemTags.Update(problemTag);
+
+                await _unitOfWork.ProblemTags.Delete(problemTag);
+                //problemTag.IsDelete = true;
+                //await _unitOfWork.ProblemTags.Update(problemTag);
                 await _unitOfWork.SaveChangeAsync();
                 var problemTagDto = _mapper.Map<ProblemTagDto>(problemTag);
                 return Result<ProblemTagDto>.Success(problemTagDto);

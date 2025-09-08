@@ -63,9 +63,15 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     return Result<TagDto>.Failure("Invalid Id", new ErrorDetail());
                 }
-                //await _unitOfWork.Tags.Delete(tag);
-                tag.IsDelete = true;
-                await _unitOfWork.Tags.Update(tag);
+                
+                //tag.IsDelete = true;
+                var request = await _unitOfWork.ProblemTags.GetAllAsync();
+                var problemTags = request.Where(pt => pt.ProblemId == id);
+                foreach (var problemTag in problemTags)
+                {
+                    await _unitOfWork.ProblemTags.Delete(problemTag);
+                }
+                await _unitOfWork.Tags.Delete(tag);
                 await _unitOfWork.SaveChangeAsync();
 
                 var tagDto = _mapper.Map<TagDto>(tag);

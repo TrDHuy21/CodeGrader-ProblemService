@@ -82,6 +82,7 @@ namespace ProblemService.Application.Service.Implementations
         {
             try
             {
+                //filter
                 var problems = _unitOfWork.Problems.GetAll();
                 if (!String.IsNullOrEmpty(filter.NameSearch?.Trim()))
                 {
@@ -96,10 +97,14 @@ namespace ProblemService.Application.Service.Implementations
                     var listTags = filter.Tagnames.Select(t => t.Trim().ToLower());
                     var requestTag = _unitOfWork.Tags.GetAll().Where(t => listTags.Contains(t.Name.Trim().ToLower())).Select(t => t.Id);
                     var listTagID = await requestTag.ToListAsync();
-                    problems = problems.Where(p => p.ProblemTags.Any(pt => listTagID.Contains(pt.TagId)));
+                    problems = problems.Where(p => listTagID.All(tagId => p.ProblemTags.Any(pt => pt.TagId == tagId)));
                 }
-                var problemsFilter = await problems.ToListAsync();
-                return Result<int>.Success(problemsFilter.Count);
+                var problemsList = await problems.ToListAsync();
+                if (filter.Levels.Count == 0 || filter.PageNumber == 0)
+                {
+                    problemsList = [];
+                }
+                return Result<int>.Success(problemsList.Count);
             }
             catch (Exception ex) {
                 return Result<int>.Failure(ex.Message, new ErrorDetail());
@@ -114,9 +119,12 @@ namespace ProblemService.Application.Service.Implementations
                 if (problem == null) {
                     return Result<ProblemDto>.Failure("Invalid Id", new ErrorDetail());
                 }
-                //await _unitOfWork.Problems.Delete(problem);
-                problem.IsDelete = true;
-                await _unitOfWork.Problems.Update(problem);
+                var request = await _unitOfWork.ProblemTags.GetAllAsync();
+                var problemTags = request.Where(pt => pt.ProblemId == id);
+                foreach (var problemTag in problemTags) {
+                    await _unitOfWork.ProblemTags.Delete(problemTag);
+                }
+                await _unitOfWork.Problems.Delete(problem);
                 await _unitOfWork.SaveChangeAsync();
                 var problemDto = _mapper.Map<ProblemDto>(problem);
                 return Result<ProblemDto>.Success(problemDto);
@@ -145,7 +153,7 @@ namespace ProblemService.Application.Service.Implementations
                     var listTags = filter.Tagnames.Select(t => t.Trim().ToLower());
                     var requestTag = _unitOfWork.Tags.GetAll().Where(t => listTags.Contains(t.Name.Trim().ToLower())).Select(t => t.Id);
                     var listTagID = await requestTag.ToListAsync();
-                    problems = problems.Where(p => p.ProblemTags.Any(pt => listTagID.Contains(pt.TagId)));
+                    problems = problems.Where(p => listTagID.All(tagId => p.ProblemTags.Any(pt => pt.TagId == tagId)));
                 }
                 if (!string.IsNullOrWhiteSpace(filter.SortBy))
                 {
@@ -157,7 +165,7 @@ namespace ProblemService.Application.Service.Implementations
                 }
                 problems = problems.Skip(filter.PageSize * (filter.PageNumber-1)).Take(filter.PageSize);
                 var problemsList = await problems.ToListAsync();
-                if(filter.PageNumber == 0)
+                if(filter.Levels.Count == 0 || filter.PageNumber == 0)
                 {
                     problemsList = [];
                 }
@@ -255,6 +263,7 @@ namespace ProblemService.Application.Service.Implementations
                     problemDto.Content = problemDtoDetail.Content;
                     problemDto.Level = problemDtoDetail.Level;
                     problemDto.Promt = problemDtoDetail.Promt;
+                    problemDto.IsDelete = problemDtoDetail.IsDelete;
                     var problem = _mapper.Map<Problem>(problemDto);
                     await _unitOfWork.Problems.Update(problem);
 

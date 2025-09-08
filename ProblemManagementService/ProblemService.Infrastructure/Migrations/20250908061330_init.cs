@@ -2,6 +2,8 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ProblemService.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -74,7 +76,7 @@ namespace ProblemService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProblemTag", x => x.ProblemId);
+                    table.PrimaryKey("PK_ProblemTag", x => new { x.ProblemId, x.TagId });
                     table.ForeignKey(
                         name: "FK_ProblemTag_Problem_ProblemId",
                         column: x => x.ProblemId,
@@ -87,6 +89,75 @@ namespace ProblemService.Infrastructure.Migrations
                         principalTable: "Tag",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Problem",
+                columns: new[] { "Id", "Content", "IsDelete", "Level", "Name", "Promt" },
+                values: new object[,]
+                {
+                    { 1, "Sum two numbers", false, 1, "Sum", "Sum prompt" },
+                    { 2, "Multiply two numbers", false, 2, "Multiply", "Multiply prompt" },
+                    { 3, "Check palindrome", false, 3, "Palindrome", "Palindrome prompt" },
+                    { 4, "Sort a list", false, 2, "Sort", "Sort prompt" },
+                    { 5, "Find max value", false, 1, "Max", "Max prompt" },
+                    { 6, "Calculate factorial", false, 2, "Factorial", "Factorial prompt" },
+                    { 7, "Reverse a string", false, 1, "Reverse String", "Reverse string prompt" },
+                    { 8, "Generate Fibonacci sequence", false, 3, "Fibonacci", "Fibonacci prompt" },
+                    { 9, "Search element in array", false, 2, "Search", "Search prompt" },
+                    { 10, "Count number of vowels in a string", false, 1, "Count Vowels", "Count vowels prompt" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tag",
+                columns: new[] { "Id", "IsDelete", "Name" },
+                values: new object[,]
+                {
+                    { 1, false, "Math" },
+                    { 2, false, "String" },
+                    { 3, false, "Array" },
+                    { 4, false, "Beginner" },
+                    { 5, false, "Intermediate" },
+                    { 6, false, "Recursion" },
+                    { 7, false, "Loop" },
+                    { 8, false, "Search" },
+                    { 9, false, "String Manipulation" },
+                    { 10, false, "Counting" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "InOutExample",
+                columns: new[] { "Id", "Explanation", "InputExample", "IsDelete", "OutputExample", "ProblemId" },
+                values: new object[,]
+                {
+                    { 1, "1+2=3", "1 2", false, "3", 1 },
+                    { 2, "2*3=6", "2 3", false, "6", 2 },
+                    { 3, "Palindrome", "madam", false, "Yes", 3 },
+                    { 4, "Sorted", "3 1 2", false, "1 2 3", 4 },
+                    { 5, "Max is 9", "7 3 9", false, "9", 5 },
+                    { 6, "5! = 120", "5", false, "120", 6 },
+                    { 7, "Reversed string", "hello", false, "olleh", 7 },
+                    { 8, "First 5 Fibonacci numbers", "5", false, "0 1 1 2 3", 8 },
+                    { 9, "Index of 7 is 2", "4 2 7 1 9, target: 7", false, "2", 9 },
+                    { 10, "Vowels are e, u, a, i, o", "education", false, "5", 10 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProblemTag",
+                columns: new[] { "ProblemId", "TagId", "IsDelete" },
+                values: new object[,]
+                {
+                    { 1, 1, false },
+                    { 1, 2, false },
+                    { 2, 1, false },
+                    { 3, 2, false },
+                    { 4, 3, false },
+                    { 5, 1, false },
+                    { 6, 6, false },
+                    { 7, 9, false },
+                    { 8, 6, false },
+                    { 9, 8, false },
+                    { 10, 10, false }
                 });
 
             migrationBuilder.CreateIndex(

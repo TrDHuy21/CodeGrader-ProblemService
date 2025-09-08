@@ -11,8 +11,8 @@ using ProblemService.Infrastructure.Context;
 namespace ProblemService.Infrastructure.Migrations
 {
     [DbContext(typeof(PMContext))]
-    [Migration("20250824142544_seed")]
-    partial class seed
+    [Migration("20250908061330_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +101,51 @@ namespace ProblemService.Infrastructure.Migrations
                             IsDelete = false,
                             OutputExample = "9",
                             ProblemId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Explanation = "5! = 120",
+                            InputExample = "5",
+                            IsDelete = false,
+                            OutputExample = "120",
+                            ProblemId = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Explanation = "Reversed string",
+                            InputExample = "hello",
+                            IsDelete = false,
+                            OutputExample = "olleh",
+                            ProblemId = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Explanation = "First 5 Fibonacci numbers",
+                            InputExample = "5",
+                            IsDelete = false,
+                            OutputExample = "0 1 1 2 3",
+                            ProblemId = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Explanation = "Index of 7 is 2",
+                            InputExample = "4 2 7 1 9, target: 7",
+                            IsDelete = false,
+                            OutputExample = "2",
+                            ProblemId = 9
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Explanation = "Vowels are e, u, a, i, o",
+                            InputExample = "education",
+                            IsDelete = false,
+                            OutputExample = "5",
+                            ProblemId = 10
                         });
                 });
 
@@ -179,6 +224,51 @@ namespace ProblemService.Infrastructure.Migrations
                             Level = 1,
                             Name = "Max",
                             Promt = "Max prompt"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Content = "Calculate factorial",
+                            IsDelete = false,
+                            Level = 2,
+                            Name = "Factorial",
+                            Promt = "Factorial prompt"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Content = "Reverse a string",
+                            IsDelete = false,
+                            Level = 1,
+                            Name = "Reverse String",
+                            Promt = "Reverse string prompt"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Content = "Generate Fibonacci sequence",
+                            IsDelete = false,
+                            Level = 3,
+                            Name = "Fibonacci",
+                            Promt = "Fibonacci prompt"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Content = "Search element in array",
+                            IsDelete = false,
+                            Level = 2,
+                            Name = "Search",
+                            Promt = "Search prompt"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Content = "Count number of vowels in a string",
+                            IsDelete = false,
+                            Level = 1,
+                            Name = "Count Vowels",
+                            Promt = "Count vowels prompt"
                         });
                 });
 
@@ -188,13 +278,13 @@ namespace ProblemService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProblemId");
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ProblemId", "TagId");
 
                     b.HasIndex("TagId");
 
@@ -204,32 +294,68 @@ namespace ProblemService.Infrastructure.Migrations
                         new
                         {
                             ProblemId = 1,
-                            IsDelete = false,
-                            TagId = 1
+                            TagId = 1,
+                            IsDelete = false
+                        },
+                        new
+                        {
+                            ProblemId = 1,
+                            TagId = 2,
+                            IsDelete = false
                         },
                         new
                         {
                             ProblemId = 2,
-                            IsDelete = false,
-                            TagId = 1
+                            TagId = 1,
+                            IsDelete = false
                         },
                         new
                         {
                             ProblemId = 3,
-                            IsDelete = false,
-                            TagId = 2
+                            TagId = 2,
+                            IsDelete = false
                         },
                         new
                         {
                             ProblemId = 4,
-                            IsDelete = false,
-                            TagId = 3
+                            TagId = 3,
+                            IsDelete = false
                         },
                         new
                         {
                             ProblemId = 5,
-                            IsDelete = false,
-                            TagId = 1
+                            TagId = 1,
+                            IsDelete = false
+                        },
+                        new
+                        {
+                            ProblemId = 6,
+                            TagId = 6,
+                            IsDelete = false
+                        },
+                        new
+                        {
+                            ProblemId = 7,
+                            TagId = 9,
+                            IsDelete = false
+                        },
+                        new
+                        {
+                            ProblemId = 8,
+                            TagId = 6,
+                            IsDelete = false
+                        },
+                        new
+                        {
+                            ProblemId = 9,
+                            TagId = 8,
+                            IsDelete = false
+                        },
+                        new
+                        {
+                            ProblemId = 10,
+                            TagId = 10,
+                            IsDelete = false
                         });
                 });
 
@@ -282,6 +408,36 @@ namespace ProblemService.Infrastructure.Migrations
                             Id = 5,
                             IsDelete = false,
                             Name = "Intermediate"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsDelete = false,
+                            Name = "Recursion"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IsDelete = false,
+                            Name = "Loop"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IsDelete = false,
+                            Name = "Search"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            IsDelete = false,
+                            Name = "String Manipulation"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IsDelete = false,
+                            Name = "Counting"
                         });
                 });
 

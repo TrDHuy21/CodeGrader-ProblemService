@@ -78,9 +78,9 @@ namespace ProblemService.Application.Service.Implementations
                 {
                     return Result<InOutExampleDto>.Failure("Invalid Id", new ErrorDetail());
                 }
-                //await _unitOfWork.Problems.Delete(problem);
-                inOutExample.IsDelete = true;
-                await _unitOfWork.InOutExamples.Update(inOutExample);
+                await _unitOfWork.InOutExamples.Delete(inOutExample);
+                //inOutExample.IsDelete = true;
+                //await _unitOfWork.InOutExamples.Update(inOutExample);
                 await _unitOfWork.SaveChangeAsync();
                 var inOutExDto = _mapper.Map<InOutExampleDto>(inOutExample);
                 return Result<InOutExampleDto>.Success(inOutExDto);
