@@ -24,7 +24,7 @@ namespace Common
 
         public static Result<T> Success(T value)
         {
-            return new Result<T>(true, value, null, new ErrorDetail());
+            return new Result<T>(true, value, null, null);
         }
         public static Result<T> Failure(string errorMessage , ErrorDetail errorFields)
         {
