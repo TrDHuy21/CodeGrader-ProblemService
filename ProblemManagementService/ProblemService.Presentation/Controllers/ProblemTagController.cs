@@ -41,7 +41,7 @@ namespace ProblemService.Presentation.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{Id}")]
+        [HttpDelete()]
         public async Task<ActionResult> DeleteProblemTag(int ProblemId, int TagId)
         {
 
