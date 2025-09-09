@@ -15,5 +15,6 @@ namespace ProblemService.Application.Service.Interfaces
         Result<ProblemTagDtoDetail> GetProblemTagById(int ProblemId, int TagId);
         Task<Result<CreateProblemTagDto>> AddProblemTagAsync(CreateProblemTagDto problemTagDto);
         Task<Result<ProblemTagDto>> DeleteProblemTagAsync(int ProblemId , int TagId);
+        Task<Result<int>> StatisticsProblem(int TagID);
     }
 }

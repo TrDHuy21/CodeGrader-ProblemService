@@ -103,5 +103,16 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
+        public async Task<Result<int>> StatisticsProblem(int TagID)
+        {
+            try
+            {
+                var count = await _unitOfWork.ProblemTags.StatisticsProblemAsync(TagID);
+                return Result<int>.Success(count);
+            }
+            catch (Exception ex) { 
+                return Result<int>.Failure(ex.Message, new ErrorDetail());
+            }
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace ProblemService.Presentation.Controllers
             var result = await _problemTagService.AddProblemTagAsync(problemTagDto);
             return Ok(result);
         }
-        [Authorize(Roles = "Admin")]
+
         [HttpGet()]
         public ActionResult GetAllProblemTag()
         {
@@ -46,6 +46,13 @@ namespace ProblemService.Presentation.Controllers
         {
 
             var result = await _problemTagService.DeleteProblemTagAsync(ProblemId,TagId);
+            return Ok(result);
+        }
+
+        [HttpGet("Statistics/{TagId}")]
+        public async Task<ActionResult> StatisticsProblemAsync(int TagId)
+        {
+            var result = await _problemTagService.StatisticsProblem(TagId);
             return Ok(result);
         }
     }

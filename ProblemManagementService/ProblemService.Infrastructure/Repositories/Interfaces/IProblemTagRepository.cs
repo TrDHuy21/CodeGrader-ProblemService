@@ -12,5 +12,6 @@ namespace ProblemService.Infrastructure.Repositories.Interfaces
         ProblemTag? GetProblemTagById(int ProblemId , int TagId);
 
         IQueryable<ProblemTag> GetAllInclude();
+        Task<int> StatisticsProblemAsync(int TagID);
     }
 }

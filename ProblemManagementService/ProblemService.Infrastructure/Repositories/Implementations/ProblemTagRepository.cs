@@ -32,5 +32,12 @@ namespace ProblemService.Infrastructure.Repositories.Implementations
                     .FirstOrDefault(pt => pt.ProblemId == ProblemId && pt.TagId == TagId);
 
         }
+
+        public async Task<int> StatisticsProblemAsync(int TagID)
+        {
+            return await _context.ProblemTags
+                                 .Where(pt => pt.TagId == TagID)
+                                 .CountAsync();
+        }
     }
 }
