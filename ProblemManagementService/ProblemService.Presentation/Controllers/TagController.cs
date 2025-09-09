@@ -56,5 +56,13 @@ namespace ProblemService.Presentation.Controllers
             var result = await _tagService.DeleteTagAsync(Id);
             return Ok(result);
         }
+
+        [HttpGet("GetTagsNotInProblem/{Id}")]
+        public async Task<ActionResult> GetTagsNotInProblem(int Id)
+        {
+
+            var result = await _tagService.GetTagsNotInProblem(Id);
+            return Ok(result);
+        }
     }
 }

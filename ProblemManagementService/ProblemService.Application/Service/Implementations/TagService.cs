@@ -116,6 +116,23 @@ namespace ProblemService.Application.Service.Implementations
             }
         }
 
+        public async Task<Result<IEnumerable<TagDto>>> GetTagsNotInProblem(int problemId)
+        {
+            try
+            {
+                var problemTags = await _unitOfWork.ProblemTags.GetAllAsync();
+                var listTag = problemTags.ToList().Where(pt => pt.ProblemId == problemId).Select(pt => pt.TagId);
+                var tags = await _unitOfWork.Tags.GetAllAsync();
+                var tagsAvalaible = tags.ToList().Where(t => !listTag.Contains(t.Id));
+                var tagsDto = _mapper.Map<IEnumerable<TagDto>>(tagsAvalaible);
+                return Result<IEnumerable<TagDto>>.Success(tagsDto);
+            }
+            catch (Exception ex) {
+
+                return Result<IEnumerable<TagDto>>.Failure(ex.Message, new ErrorDetail());
+            }
+        }
+
         public async Task<Result<TagDtoDetail>> UpdateTagAsync(TagDtoDetail tagDto)
         {
             try
@@ -148,5 +165,6 @@ namespace ProblemService.Application.Service.Implementations
                 return Result<TagDtoDetail>.Failure(ex.Message, new ErrorDetail());
             }
         }
+
     }
 }

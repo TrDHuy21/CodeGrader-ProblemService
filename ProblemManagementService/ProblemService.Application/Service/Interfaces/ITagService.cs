@@ -16,5 +16,7 @@ namespace ProblemService.Application.Service.Interfaces
         Task<Result<CreateTagDto>> AddTagAsync(CreateTagDto tagDto);
         Task<Result<TagDto>> DeleteTagAsync(int id);
         Task<Result<TagDtoDetail>> UpdateTagAsync(TagDtoDetail tagDto);
+
+        Task<Result<IEnumerable<TagDto>>> GetTagsNotInProblem(int problemId);
     }
 }
