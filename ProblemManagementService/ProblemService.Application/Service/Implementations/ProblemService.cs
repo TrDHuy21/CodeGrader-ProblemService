@@ -100,7 +100,7 @@ namespace ProblemService.Application.Service.Implementations
                     problems = problems.Where(p => listTagID.All(tagId => p.ProblemTags.Any(pt => pt.TagId == tagId)));
                 }
                 var problemsList = await problems.ToListAsync();
-                if (filter.Levels.Count == 0 || filter.PageNumber == 0)
+                if (filter.PageNumber == 0)
                 {
                     problemsList = [];
                 }

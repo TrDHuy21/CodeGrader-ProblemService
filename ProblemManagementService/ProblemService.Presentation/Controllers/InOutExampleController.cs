@@ -31,7 +31,7 @@ namespace ProblemService.Presentation.Controllers
             var result = await _inOutExampleService.AddInOutExampleAsync(inOutExampleDto);
             return Ok(result);
         }
-        [Authorize(Roles = "Admin")]
+
         [HttpGet()]
         public async Task<ActionResult> GetAllInOutExample()
         {
